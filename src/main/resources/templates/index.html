@@ -22,8 +22,11 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" th:href="@{/register}">Register</a>
         </li>
-        <li>
+        <li sec:authorize="hasRole('ROLE_ADMIN')">
           <a class="nav-link active text-end" aria-current="page" th:href="@{/users}">List of users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
         </li>
       </ul>
     </div>
@@ -32,7 +35,7 @@
 <br /><br />
 <div class="container">
   <div class="row">
-    <h1 class="text-center"> Registration and Login System </h1>
+    <h1 class="text-center"> Website </h1>
   </div>
 </div>
 </body>

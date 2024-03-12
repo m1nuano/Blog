@@ -31,16 +31,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(UserDto userDto) {
         User user = new User();
-
+        Long id = userDto.getId();
         // Check for null or empty strings
         String firstName = userDto.getFirstName();
         String lastName = userDto.getLastName();
 
+        user.setId(user.getId());
         user.setName((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : ""));
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        Role role = roleRepository.findByName("ROLE_USER");
+        Role role = roleRepository.findByName("ROLE_ADMIN");
         if (role == null) {
             role = checkRoleExist();
         }
@@ -62,35 +63,31 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+/*
+Метод удаления пользователей (пока ненужен)
     @Override
     public void deleteUserById(Long userId) {
         if ("null".equals(String.valueOf(userId))) {
-            // Handle the case when userId is "null"
-            throw new IllegalArgumentException("User ID cannot be 'null'");
+
+            // Handle the case when userId is null
+            throw new NullPointerException("User ID cannot be null");
+//            throw new IllegalArgumentException("User ID cannot be 'null'");
+
         } else {
             userRepository.deleteById(userId);
         }
-    }
-
-
-//    private UserDto mapToUserDto(User user){
-//        UserDto userDto = new UserDto();
-//        String[] str = user.getName().split(" ");
-//        userDto.setFirstName(str[0]);
-//        userDto.setLastName(str[1]);
-//        userDto.setEmail(user.getEmail());
-//        return userDto;
-//    }
+    }*/
 
     private Role checkRoleExist() {
         Role role = new Role();
-        role.setName("ROLE_USER");  // Corrected role name
+        role.setName("ROLE_ADMIN");  // Corrected role name
         return roleRepository.save(role);
     }
 
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         String[] str = user.getName().split(" ");
+        userDto.setId(userDto.getId());
         userDto.setFirstName(str[0]);
         userDto.setLastName(str[1]);
         userDto.setEmail(user.getEmail());

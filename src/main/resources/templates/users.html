@@ -37,27 +37,19 @@
       <th>Last Name</th>
       <th>Email</th>
       <th>Role</th>
-      <th>DeleteUser</th>
     </tr>
     </thead>
     <tbody>
-  <tr th:each="user : ${users}">
-    <td th:text="${user.firstName}"></td>
-    <td th:text="${user.lastName}"></td>
-    <td th:text="${user.email}"></td>
-    <td>
-      <!-- Display roles as a comma-separated list -->
-      <span th:text="${#strings.arrayJoin(user.roles, ',')}"></span>
-    </td>
-    <td>
-      <!-- Add a button to trigger user deletion -->
-      <form th:action="@{'/deleteUser/' + ${user.id}}" method="post">
-        <button type="submit" class="btn btn-danger">Delete</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-
+    <tr th:each="user : ${users}">
+      <td th:text="${user.firstName}"></td>
+      <td th:text="${user.lastName}"></td>
+      <td th:text="${user.email}"></td>
+      <td>
+        <!-- Display roles as a comma-separated list -->
+        <span th:text="${#strings.arrayJoin(user.roles, ',')}"></span>
+      </td>
+    </tr>
+    </tbody>
   </table>
 </div>
 </body>

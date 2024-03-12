@@ -63,17 +63,11 @@ public class MainController {
         model.addAttribute("users", users);
         return "users";
     }
-    // Option 1
-//    @PostMapping("/deleteUser/{userId}")
-//    public String deleteUser(@PathVariable("userId") Long userId) {
-//        userService.deleteUserById(userId);
-//        return "redirect:/users";
-//    }
 
-    @PostMapping("/deleteUser/{userId}")
+/*    Удаление пользователей
+@PostMapping("/deleteUser/{userId}")
     public String deleteUser(@PathVariable Long userId) {
         userService.deleteUserById(userId);
         return "redirect:/users";
-    }
-
+    }*/
 }
