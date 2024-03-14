@@ -4,7 +4,7 @@
 >
 <head>
   <meta charset="UTF-8">
-  <title>website</title>
+  <title>Admin Page</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
         rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
@@ -20,25 +20,20 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mZb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" th:href="@{/register}">Register</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link active" aria-current="page" th:href="@{/logout}">Logout</a>
-        </li>
-      </ul>
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li sec:authorize="hasRole('ROLE_ADMIN')">
-          <a class="nav-link active text-end" aria-current="page" th:href="@{/admin}">Admin</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 <br /><br />
-<div class="container">
-  <div class="row">
-    <h1 class="text-center"> Website </h1>
+<main class="container">
+  <div class="bg-body-tertiary p-5 rounded">
+    <h1>List of users</h1>
+    <p class="lead">THere is the list of all registered users in this system</p>
+    <a th:href="@{/users}" class="btn btn-lg btn-primary" href="/docs/5.3/components/navbar/" role="button">View the list of users »</a>
   </div>
-</div>
+</main>
+<script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
