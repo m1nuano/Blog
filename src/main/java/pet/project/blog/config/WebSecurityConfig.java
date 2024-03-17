@@ -36,7 +36,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers("/register/**", "/index", "/login").permitAll()
                                 .requestMatchers("/admin").hasRole("ADMIN")
-//                                .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 ).formLogin(
                         form -> form

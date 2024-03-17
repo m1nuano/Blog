@@ -32,22 +32,23 @@ public class UserServiceImpl implements UserService {
     public void saveUser(UserDto userDto) {
         User user = new User();
         Long id = userDto.getId();
-        // Check for null or empty strings
         String firstName = userDto.getFirstName();
         String lastName = userDto.getLastName();
 
-        user.setId(user.getId());
+        user.setId(id);
         user.setName((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : ""));
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        Role role = roleRepository.findByName("ROLE_USER");
+        //Измените здесь на "ROLE_ADMIN" чтобы зарегистрировать пользователя с правами администратора
+        Role role = roleRepository.findByName("ROLE_ADMIN");
         if (role == null) {
             role = checkRoleExist();
         }
         user.setRoles(Arrays.asList(role));
         userRepository.save(user);
     }
+
 
     @Override
     public User findUserByEmail(String email) {
@@ -62,31 +63,40 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-/*
-Метод удаления пользователей (пока ненужен)
+
+    //Метод удаления пользователей
     @Override
-    public void deleteUserById(Long userId) {
-        if ("null".equals(String.valueOf(userId))) {
-
-            // Handle the case when userId is null
-            throw new NullPointerException("User ID cannot be null");
-//            throw new IllegalArgumentException("User ID cannot be 'null'");
-
+    public void deleteUserById(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
         } else {
-            userRepository.deleteById(userId);
+            try {
+                Long id = Long.parseLong(userId);
+                // Поиск пользователя по ID
+                User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+                // Удаление всех ролей
+                user.getRoles().clear();
+                // Сохраняем изменения
+                userRepository.save(user);
+                // Удаление пользователя
+                userRepository.deleteById(id);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid User ID format. Please provide a valid numeric ID.");
+            }
         }
-    }*/
+    }
+
 
     private Role checkRoleExist() {
         Role role = new Role();
-        role.setName("ROLE_USER");  // Corrected role name
+        role.setName("ROLE_USER");
         return roleRepository.save(role);
     }
 
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         String[] str = user.getName().split(" ");
-        userDto.setId(userDto.getId());
+        userDto.setId(user.getId());
         userDto.setFirstName(str[0]);
         userDto.setLastName(str[1]);
         userDto.setEmail(user.getEmail());
