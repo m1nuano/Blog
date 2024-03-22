@@ -1,6 +1,7 @@
 package pet.project.blog.controller;
 
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,6 +70,17 @@ public class MainController {
             userService.deleteUserById(userId);
             redirectAttributes.addFlashAttribute("successMessage", "User successfully deleted");
         } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/users";
+    }
+
+    @PostMapping("changeRole/{userId}")
+    public String changeUserRole(@PathVariable String userId, RedirectAttributes redirectAttributes) {
+        try {
+            userService.changeUserRole(userId);
+            redirectAttributes.addFlashAttribute("successMessage", "User role is successfully changed");
+        } catch (IllegalArgumentException e){
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/users";

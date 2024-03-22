@@ -1,13 +1,8 @@
 package pet.project.blog.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,9 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name="users")
-
-public class User
-{
+public class User {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -35,11 +28,15 @@ public class User
     @Column(nullable=false)
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-            name="users_roles",
-            joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
-            inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
-    private List<Role> roles = new ArrayList<>();
+            name = "users_roles",
+            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")}
+    )
+    private List<Role> roles;
+
+
+
 
 }

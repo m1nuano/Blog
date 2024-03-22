@@ -12,6 +12,10 @@ public interface UserService {
     List<UserDto> findAllUsers();
 
 
+    // Метод изменения роли пользователя
+    void changeUserRole(String userId);
+
     //Метод удаления пользователей
     void deleteUserById(String userId);
+
 }

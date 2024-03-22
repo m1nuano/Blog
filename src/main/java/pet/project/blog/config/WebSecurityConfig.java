@@ -37,6 +37,7 @@ public class WebSecurityConfig {
                         authorize.requestMatchers("/register/**", "/index", "/login").permitAll()
                                 .requestMatchers("/admin").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/changeRole/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 ).formLogin(
                         form -> form
@@ -46,7 +47,7 @@ public class WebSecurityConfig {
                                 .permitAll()
                 ).logout(
                         logout -> logout
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                .logoutSuccessUrl("/login")
                                 .permitAll()
                 );
         return http.build();
