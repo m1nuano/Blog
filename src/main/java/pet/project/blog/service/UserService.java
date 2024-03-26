@@ -8,14 +8,16 @@ import java.util.List;
 
 public interface UserService {
     void saveUser(UserDto userDto);
+
     User findUserByEmail(String email);
+
     List<UserDto> findAllUsers();
 
+    UserDto findUserById(String userId);
 
-    // Метод изменения роли пользователя
+    // Method for changing role
     void changeUserRole(String userId);
 
-    //Метод удаления пользователей
+    //Method for deleting users
     void deleteUserById(String userId);
-
 }

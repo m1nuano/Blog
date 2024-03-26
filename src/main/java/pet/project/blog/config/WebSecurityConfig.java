@@ -38,6 +38,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/admin").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/changeRole/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/profile/**").authenticated()
                                 .anyRequest().authenticated()
                 ).formLogin(
                         form -> form

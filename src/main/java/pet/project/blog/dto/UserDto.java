@@ -17,6 +17,12 @@ public class UserDto
 {
     @NotEmpty
     private Long id;
+
+    //
+    @NotEmpty(message = "Nickname should be not empty")
+    private String username;
+    //
+
     @NotEmpty
     private String firstName;
     @NotEmpty

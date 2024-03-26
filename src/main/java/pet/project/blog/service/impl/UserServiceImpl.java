@@ -31,20 +31,26 @@ public class UserServiceImpl implements UserService {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
+    //Serves to change the role of only the registered user, set ROLE_USER if you want new users to have the USER role by default
+    RoleEnum RoleSwitcher = RoleEnum.ROLE_USER;
 
+    // Updated saveUser method in UserServiceImpl
     @Override
     public void saveUser(UserDto userDto) {
         User user = new User();
         Long id = userDto.getId();
         String firstName = userDto.getFirstName();
         String lastName = userDto.getLastName();
+        String nickName = userDto.getUsername();
 
         user.setId(id);
-        user.setName((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : ""));
+        user.setFirstName(firstName != null ? firstName : "");
+        user.setLastName(lastName != null ? lastName : "");
+        user.setUsername(nickName != null ? nickName : (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : ""));
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        Role role = roleRepository.findByRole(RoleEnum.ROLE_USER);
+        Role role = roleRepository.findByRole(RoleSwitcher);
         if (role == null) {
             role = checkRoleExist();
         }
@@ -66,6 +72,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto findUserById(String userId) {
+        Long id = Long.parseLong(userId);
+        try {
+            Optional<User> userOptional = userRepository.findById(id);
+            return userOptional
+                    .map(this::mapToUserDto)
+                    .orElse(null);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid User ID format. Please provide a valid numeric ID.");
+        }
+    }
+
+
+    @Override
     @Transactional
     public void changeUserRole(String userId) {
         // Check for a null or empty user ID
@@ -81,33 +101,29 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalArgumentException("Пользователь с указанным идентификатором не найден");
             }
             User user = optionalUser.get();
-
-            // Define a new role
-            Role newRole = user.getRoles().stream()
-                    .findFirst()
-                    .map(role -> {
-                        if (role.getRole() == RoleEnum.ROLE_USER) {
-                            return roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
-                        } else if (role.getRole() == RoleEnum.ROLE_ADMIN) {
-                            return roleRepository.findByRole(RoleEnum.ROLE_USER);
-                        } else {
-                            return null; // Return null if the user does not have any of the roles (unexpected situation)
-                        }
-                    })
-                    .orElseThrow(() -> new IllegalStateException("У пользователя отсутствует какая-либо роль"));
-
-            // Check if the user has the ROLE_ADMIN role
-            boolean hasAdminRole = user.getRoles().stream()
-                    .anyMatch(role -> role.getRole() == RoleEnum.ROLE_ADMIN);
-
-            // If the user does not have the ROLE_ADMIN role, add it
-            if (!hasAdminRole) {
-                Role adminRole = roleRepository.findByRole(RoleEnum.ROLE_ADMIN);
-                user.getRoles().add(adminRole);
+            // Algorithm for changing the cyclic role change
+            // Check that the user has roles
+            if (user.getRoles().isEmpty()) {
+                throw new IllegalStateException("У пользователя отсутствует какая-либо роль");
             }
 
-            // Replace the user role with a new one
-            user.getRoles().removeIf(role -> role.getRole() == RoleEnum.ROLE_USER || role.getRole() == RoleEnum.ROLE_ADMIN);
+            // Get all roles from the database
+            List<Role> allRoles = roleRepository.findAll();
+
+            // Determine the current user role
+            Role currentRole = user.getRoles().get(0); // Assume that the user always has only one role
+
+            // Determine the index of the current role in the list of all roles
+            int currentIndex = allRoles.indexOf(currentRole);
+
+            // Calculate the index of the next role
+            int nextIndex = (currentIndex + 1) % allRoles.size();
+
+            // Get the next role
+            Role newRole = allRoles.get(nextIndex);
+
+            // Set a new role for the user
+            user.getRoles().clear();
             user.getRoles().add(newRole);
 
             userRepository.save(user);
@@ -120,22 +136,25 @@ public class UserServiceImpl implements UserService {
 
     private Role checkRoleExist() {
         Role role = new Role();
-        role.setRole(RoleEnum.ROLE_USER);
+        //
+        role.setRole(RoleSwitcher);
         return roleRepository.save(role);
     }
 
+    // Updated mapToUserDto method in UserServiceImpl
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
-        String[] str = user.getName().split(" ");
         userDto.setId(user.getId());
-        userDto.setFirstName(str[0]);
-        userDto.setLastName(str[1]);
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setUsername(user.getUsername());
         userDto.setEmail(user.getEmail());
         userDto.setRoles(user.getRoles().stream()
                 .map(role -> role.getRole().name())
                 .collect(Collectors.toList()));
         return userDto;
     }
+
 
     @Override
     public void deleteUserById(String userId) {
@@ -148,8 +167,9 @@ public class UserServiceImpl implements UserService {
                 user.getRoles().clear();
                 userRepository.save(user);
                 userRepository.deleteById(id);
+
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                if (auth != null && auth.getName().equals(user.getName())) {
+                if (auth != null && auth.getName().equals(user.getUsername())) {
                     SecurityContextHolder.getContext().setAuthentication(null);
                 }
             } catch (NumberFormatException e) {
