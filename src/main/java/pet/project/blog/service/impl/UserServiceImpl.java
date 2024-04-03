@@ -7,9 +7,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pet.project.blog.dto.UserDto;
+import pet.project.blog.entity.Publication;
 import pet.project.blog.entity.Role;
 import pet.project.blog.entity.User;
 import pet.project.blog.enums.RoleEnum;
+import pet.project.blog.repository.PublicationRepository;
 import pet.project.blog.repository.RoleRepository;
 import pet.project.blog.repository.UserRepository;
 import pet.project.blog.service.UserService;
@@ -22,17 +24,21 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PublicationRepository publicationRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
+                           PublicationRepository publicationRepository,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.publicationRepository = publicationRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     //Serves to change the role of only the registered user, set ROLE_USER if you want new users to have the USER role by default
-    RoleEnum RoleSwitcher = RoleEnum.ROLE_USER;
+    RoleEnum RoleSwitcher = RoleEnum.ROLE_ADMIN;
 
     // Updated saveUser method in UserServiceImpl
     @Override
@@ -175,6 +181,25 @@ public class UserServiceImpl implements UserService {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Invalid User ID format. Please provide a valid numeric ID.");
             }
+        }
+    }
+
+    @Override
+    public UserDto findUserByPublication(String ID) {
+        Long id = Long.parseLong(ID);
+        Optional<Publication> publication = publicationRepository.findById(id);
+        if (publication.isPresent()) {
+            Publication pub = publication.get();
+            if (pub.getUser() != null) {
+                User user = pub.getUser();
+                return mapToUserDto(user);
+            } else {
+                // If the user is not found, return null or throw an exception, depending on your logic
+                return null;
+            }
+        } else {
+            // If post not found, return null or throw exception, depending on your logic
+            return null;
         }
     }
 }

@@ -20,4 +20,6 @@ public interface UserService {
 
     //Method for deleting users
     void deleteUserById(String userId);
+
+    UserDto findUserByPublication(String ID);
 }

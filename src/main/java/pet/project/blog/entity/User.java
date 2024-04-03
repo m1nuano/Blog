@@ -19,7 +19,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    //
+
     @Column(nullable=false)
     private String username;
 
@@ -28,9 +28,6 @@ public class User {
 
     @Column(nullable=false)
     private String lastName;
-
-
-    //
 
     @Column(nullable=false, unique=true)
     private String email;
@@ -46,7 +43,6 @@ public class User {
     )
     private List<Role> roles;
 
-
-
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Publication> publications;
 }

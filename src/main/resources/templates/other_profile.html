@@ -31,17 +31,15 @@
         </div>
     </div>
 </nav>
-</div>
 <main class="container">
     <div class="bg-body-tertiary p-5 rounded">
-        <h1>My Profile</h1>
+        <h1>Other Profile</h1>
         <div th:each="user : ${user}">
             <p>ID: <span th:text="${user.id}"></span></p>
             <p>Name: <span th:text="${user.username}"></span></p>
             <p>Email: <span th:text="${user.email}"></span></p>
             <p>Firstname: <span th:text="${user.firstName}"></span></p>
             <p>Lastname: <span th:text="${user.lastName}"></span></p>
-            <p>Role: <span th:text="${user.roles != null ? user.roles[0].role : 'Unknown'}"></span></p>
         </div>
         <div th:if="${user == null}">
             <p>User not found</p>

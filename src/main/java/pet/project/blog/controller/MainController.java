@@ -1,7 +1,6 @@
 package pet.project.blog.controller;
 
 
-import org.springframework.boot.Banner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -11,47 +10,64 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pet.project.blog.dto.UserDto;
+import pet.project.blog.entity.Publication;
 import pet.project.blog.entity.User;
+import pet.project.blog.repository.PublicationRepository;
 import pet.project.blog.service.UserService;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class MainController {
 
     private UserService userService;
+    private PublicationRepository publicationRepository;
 
-    public MainController(UserService userService) {
+    public MainController(UserService userService, PublicationRepository publicationRepository) {
         this.userService = userService;
+        this.publicationRepository = publicationRepository;
     }
 
     // Now we pass the user even to index
     @GetMapping("/index")
     public String index(Model model) {
+        //To view publications
+        Iterable<Publication> publications = publicationRepository.findAll();
+        model.addAttribute("public", publications);
+        //
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userService.findUserByEmail(email);
-        if (user != null) {
-            model.addAttribute("user", user);
-            return "index"; // Redirect to profile URL
-        } else {
-            return "error"; // Handle the case when the user is not found
-        }
+        model.addAttribute("user", user);
+        return "index"; // Redirect to profile URL
     }
 
-
     @GetMapping("/profile/{userId}")
-    public String profile(Model model) {
+    public String userProfileOrOtherProfile(@PathVariable String userId, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userService.findUserByEmail(email);
-        if (user != null) {
-            model.addAttribute("user", user);
-            return "profile";
+        User currentUser = userService.findUserByEmail(email);
+
+        if (currentUser != null) {
+            // Check if the IDs of the current user and the requested user are equal
+            if (currentUser.getId().equals(Long.valueOf(userId))) {
+                // If the current user is viewing their own profile
+                model.addAttribute("user", currentUser);
+                return "profile";
+            } else {
+                // If the current user is viewing another user's profile
+                UserDto userDto = userService.findUserById(userId);
+                if (userDto != null) {
+                    model.addAttribute("user", userDto);
+                    return "other_profile";
+                } else {
+                    // Handle the situation when the user is not found
+                    return "user_not_found";
+                }
+            }
         } else {
-            return "error";
+            // Handle the situation when the current user is not found
+            return "user_not_found";
         }
     }
 
