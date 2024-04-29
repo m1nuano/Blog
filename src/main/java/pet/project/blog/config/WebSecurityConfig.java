@@ -35,10 +35,10 @@ public class WebSecurityConfig {
                 .cors().disable()
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers("/register/**", "/index", "/login").permitAll()
-                                .requestMatchers("/admin").hasRole("ADMIN")
+                                .requestMatchers("/index/admin").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/changeRole/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/profile/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/index/profile/**").authenticated()
                                 .anyRequest().authenticated()
                 ).formLogin(
                         form -> form

@@ -22,7 +22,7 @@
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" th:href="@{/publication}">Publication</a>
+                    <a class="nav-link active" th:href="@{/index/publication}">Publication</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" th:href="@{/logout}">Logout</a>
@@ -43,6 +43,14 @@
         </div>
         <div th:if="${user == null}">
             <p>User not found</p>
+        </div>
+    </div>
+    <div class="bg-body-tertiary p-5 rounded">
+        <h1>Publications of this User</h1>
+        <div th:each="public : ${public}" class="alert alert-info mt-2">
+            <p> ID: <a th:text="${public.id}"></a></p>
+            <h4 th:text="${public.tag}"></h4>
+            <h1 th:text="${public.text}"></h1>
         </div>
     </div>
 </main>

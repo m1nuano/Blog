@@ -35,5 +35,12 @@ public class Publication {
         this.tag = tag;
         this.user = user;
     }
+
+    public Publication(String newText, String newTag){
+        this.text = newText;
+        this.tag = newTag;
+    }
+
+
 }
 

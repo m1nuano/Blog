@@ -22,7 +22,7 @@
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" th:href="@{/publication}">Publication</a>
+                    <a class="nav-link active" th:href="@{/index/publication}">Publication</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" th:href="@{/logout}">Logout</a>
@@ -31,20 +31,45 @@
         </div>
     </div>
 </nav>
-</div>
 <main class="container">
-    <div class="bg-body-tertiary p-5 rounded">
-        <h1>My Profile</h1>
-        <div th:each="user : ${user}">
-            <p>ID: <span th:text="${user.id}"></span></p>
-            <p>Name: <span th:text="${user.username}"></span></p>
-            <p>Email: <span th:text="${user.email}"></span></p>
-            <p>Firstname: <span th:text="${user.firstName}"></span></p>
-            <p>Lastname: <span th:text="${user.lastName}"></span></p>
-            <p>Role: <span th:text="${user.roles != null ? user.roles[0].role : 'Unknown'}"></span></p>
+    <div class="row">
+        <!-- Контейнер с профилем пользователя -->
+        <div class="col-md-6">
+            <div class="bg-body-tertiary p-5 rounded">
+                <h1>My Profile</h1>
+                <div th:each="user : ${user}">
+                    <p>ID: <span th:text="${user.id}"></span></p>
+                    <p>Name: <span th:text="${user.username}"></span></p>
+                    <p>Email: <span th:text="${user.email}"></span></p>
+                    <p>Firstname: <span th:text="${user.firstName}"></span></p>
+                    <p>Lastname: <span th:text="${user.lastName}"></span></p>
+                    <p>Role: <span th:text="${user.roles != null ? user.roles[0].role : 'Unknown'}"></span></p>
+                </div>
+                <div th:if="${user == null}">
+                    <p>User not found</p>
+                </div>
+            </div>
         </div>
-        <div th:if="${user == null}">
-            <p>User not found</p>
+
+        <!-- Контейнер с кнопками -->
+        <div class="col-md-6 d-flex justify-content-end">
+            <div class="bg-body-tertiary p-5 rounded" sec:authorize="hasRole('ROLE_ADMIN')">
+                <h1>Admin panel</h1>
+                <a th:href="@{/index/admin/{userId}(userId=${user.id})}" class="btn btn-lg btn-primary" href="/docs/5.3/components/navbar/" role="button">Go to Admin Panel »</a>
+            </div>
+        </div>
+    </div>
+    <div class="bg-body-tertiary p-5 rounded">
+        <h1>My Publications</h1>
+        <div th:each="public : ${public}" class="alert alert-info mt-2">
+            <p>ID: <a th:text="${public.id}"></a></p>
+            <h4 class="text-wrap" style="word-wrap: break-word;" th:text="${public.tag}"></h4>
+            <h1 class="text-wrap" style="word-wrap: break-word;" th:text="${public.text}"></h1>
+            <div class="nav-link active text-end">
+                <small>
+                    <a th:href="@{'/index/publication_edit/' + ${public.id}}" class="btn btn-primary" href="/docs/5.3/components/navbar/" role="button">Edit</a>
+                </small>
+            </div>
         </div>
     </div>
 </main>

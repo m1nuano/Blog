@@ -20,14 +20,14 @@
                     </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
                         <a class="nav-link active" aria-current="page"
-                           th:href="@{/profile/{userId}(userId=${user != null ? user.id : ''})}">Profile</a>
+                           th:href="@{/index/profile/{userId}(userId=${user != null ? user.id : ''})}">Profile</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li sec:authorize="hasRole('ROLE_ADMIN')">
-                        <a class="nav-link active text-end" aria-current="page" th:href="@{/admin}">Admin</a>
-                    </li>
-                </ul>
+<!--                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">-->
+<!--                    <li sec:authorize="hasRole('ROLE_ADMIN')">-->
+<!--                        <a class="nav-link active text-end" aria-current="page" th:href="@{/index/admin}">Admin</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
             </div>
         </div>
     </nav>

@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //Serves to change the role of only the registered user, set ROLE_USER if you want new users to have the USER role by default
-    RoleEnum RoleSwitcher = RoleEnum.ROLE_ADMIN;
+    RoleEnum RoleSwitcher = RoleEnum.ROLE_USER;
 
     // Updated saveUser method in UserServiceImpl
     @Override
@@ -194,11 +194,9 @@ public class UserServiceImpl implements UserService {
                 User user = pub.getUser();
                 return mapToUserDto(user);
             } else {
-                // If the user is not found, return null or throw an exception, depending on your logic
                 return null;
             }
         } else {
-            // If post not found, return null or throw exception, depending on your logic
             return null;
         }
     }
