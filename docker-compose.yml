@@ -1,0 +1,30 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    ports:
+      - "2004:5432"
+    environment:
+      POSTGRES_DB: pet_blog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1111
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-container
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pet_blog
+    volumes:
+      - ./uploads:/app/uploads
+
+volumes:
+  postgres-data:
