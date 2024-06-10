@@ -1,13 +1,10 @@
 package pet.project.blog.service.impl;
 
 import io.micrometer.common.util.StringUtils;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pet.project.blog.entity.Publication;
 import pet.project.blog.repository.PublicationRepository;
-import pet.project.blog.repository.RoleRepository;
-import pet.project.blog.repository.UserRepository;
 import pet.project.blog.service.PublicationService;
 
 import java.util.List;

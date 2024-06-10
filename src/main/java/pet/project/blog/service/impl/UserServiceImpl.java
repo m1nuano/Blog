@@ -16,7 +16,10 @@ import pet.project.blog.repository.RoleRepository;
 import pet.project.blog.repository.UserRepository;
 import pet.project.blog.service.UserService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,50 +97,38 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changeUserRole(String userId) {
-        // Check for a null or empty user ID
         if (StringUtils.isBlank(userId)) {
-            throw new IllegalArgumentException("Идентификатор пользователя не может быть пустым");
+            throw new IllegalArgumentException("User ID cannot be blank");
         }
 
         try {
             Long id = Long.parseLong(userId);
-
             Optional<User> optionalUser = userRepository.findById(id);
-            if (optionalUser.isEmpty()) {
-                throw new IllegalArgumentException("Пользователь с указанным идентификатором не найден");
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                List<Role> allRoles = roleRepository.findAll();
+                if (allRoles.isEmpty()) {
+                    throw new IllegalStateException("No roles found in the system");
+                }
+
+                Role currentRole = user.getRoles().isEmpty() ? null : user.getRoles().get(0);
+                int currentIndex = currentRole == null ? -1 : allRoles.indexOf(currentRole);
+                int nextIndex = (currentIndex + 1) % allRoles.size();
+                Role newRole = allRoles.get(nextIndex);
+
+                // Создаем изменяемый список ролей и устанавливаем новую роль
+                List<Role> updatedRoles = new ArrayList<>();
+                updatedRoles.add(newRole);
+                user.setRoles(updatedRoles);
+                userRepository.save(user);
+            } else {
+                throw new IllegalArgumentException("User not found");
             }
-            User user = optionalUser.get();
-            // Algorithm for changing the cyclic role change
-            // Check that the user has roles
-            if (user.getRoles().isEmpty()) {
-                throw new IllegalStateException("У пользователя отсутствует какая-либо роль");
-            }
-
-            // Get all roles from the database
-            List<Role> allRoles = roleRepository.findAll();
-
-            // Determine the current user role
-            Role currentRole = user.getRoles().get(0); // Assume that the user always has only one role
-
-            // Determine the index of the current role in the list of all roles
-            int currentIndex = allRoles.indexOf(currentRole);
-
-            // Calculate the index of the next role
-            int nextIndex = (currentIndex + 1) % allRoles.size();
-
-            // Get the next role
-            Role newRole = allRoles.get(nextIndex);
-
-            // Set a new role for the user
-            user.getRoles().clear();
-            user.getRoles().add(newRole);
-
-            userRepository.save(user);
-
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Неверный формат идентификатора пользователя. Пожалуйста, укажите допустимый числовой идентификатор.");
+            throw new IllegalArgumentException("Invalid User ID format. Please provide a valid numeric ID.");
         }
     }
+
 
 
     private Role checkRoleExist() {
@@ -170,7 +161,7 @@ public class UserServiceImpl implements UserService {
             try {
                 Long id = Long.parseLong(userId);
                 User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-                user.getRoles().clear();
+                user.setRoles(Collections.emptyList()); //
                 userRepository.save(user);
                 userRepository.deleteById(id);
 

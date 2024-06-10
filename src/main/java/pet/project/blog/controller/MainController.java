@@ -19,9 +19,9 @@ import java.util.List;
 @Controller
 public class MainController {
 
-    private UserService userService;
-    private PublicationRepository publicationRepository;
-    private PublicationService publicationService;
+    private final UserService userService;
+    private final PublicationRepository publicationRepository;
+    private final PublicationService publicationService;
 
     public MainController(UserService userService, PublicationService publicationService, PublicationRepository publicationRepository) {
         this.userService = userService;

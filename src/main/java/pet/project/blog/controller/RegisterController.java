@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @Controller
 public class RegisterController {
-    private UserService userService;
+    private final UserService userService;
 
     public RegisterController(UserService userService) {
         this.userService = userService;

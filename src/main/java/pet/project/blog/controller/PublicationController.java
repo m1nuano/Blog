@@ -21,9 +21,9 @@ import java.security.Principal;
 @Controller
 public class PublicationController {
 
-    private PublicationRepository publicationRepository;
-    private UserService userService;
-    private PublicationService publicationService;
+    private final PublicationRepository publicationRepository;
+    private final UserService userService;
+    private final PublicationService publicationService;
 
 
     public PublicationController(UserService userService, PublicationRepository publicationRepository, PublicationService publicationService) {

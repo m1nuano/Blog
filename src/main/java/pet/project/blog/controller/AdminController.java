@@ -16,7 +16,7 @@ import java.util.List;
 
 @Controller
 public class AdminController {
-    private UserService userService;
+    private final UserService userService;
 
     public AdminController(UserService userService) {
         this.userService = userService;
@@ -36,6 +36,12 @@ public class AdminController {
     public String users(Model model) {
         List<UserDto> users = userService.findAllUsers();
         model.addAttribute("users", users);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userService.findUserByEmail(email);
+        model.addAttribute("user", user);
+
         return "users";
     }
 
