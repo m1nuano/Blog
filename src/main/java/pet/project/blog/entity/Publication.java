@@ -18,7 +18,6 @@ public class Publication {
 
     private String text;
     private String tag;
-    private String creator;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -38,7 +37,5 @@ public class Publication {
         this.text = newText;
         this.tag = newTag;
     }
-
-
 }
 

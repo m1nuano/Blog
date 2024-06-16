@@ -1,11 +1,13 @@
 package pet.project.blog.service.impl;
 
 import io.micrometer.common.util.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import pet.project.blog.dto.UserDto;
 import pet.project.blog.entity.Publication;
 import pet.project.blog.entity.Role;
@@ -16,6 +18,10 @@ import pet.project.blog.repository.RoleRepository;
 import pet.project.blog.repository.UserRepository;
 import pet.project.blog.service.UserService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

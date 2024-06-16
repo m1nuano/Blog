@@ -41,8 +41,8 @@ public class PublicationController {
     public String savePublication(Model model, @RequestParam String text, @RequestParam String tag, Principal principal) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = userService.findUserByEmail(email);
+        String creator = authentication.getName();
+        User user = userService.findUserByEmail(creator);
 
         Publication publication = new Publication(text, tag, user);
         publicationRepository.save(publication);
@@ -51,28 +51,61 @@ public class PublicationController {
         return ("redirect:/index");
     }
 
-
     @GetMapping("/index/publication_edit/{pubId}")
     public String showEditForm(Model model, @PathVariable String pubId) {
-        // Add the publication ID to the model
-        model.addAttribute("pubId", pubId);
+        // Получаем текущую публикацию
+        Publication publication = publicationService.getPublicationById(pubId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userService.findUserByEmail(email);
+
+        // current user ? creator
+        if (publication.getUser() == null || !publication.getUser().equals(currentUser)) {
+            return "redirect:/index?error=Unauthorized";
+        }
+        // Adding current publication data to the model
+        model.addAttribute("publication", publication);
         return "publication_edit";
     }
 
-
     @PostMapping("/index/publication_edit/{pubId}")
-    public String editPublication(Model model, @PathVariable String pubId, String newText, String newTag) {
-        // Checking for changes in publication
+    public String editPublication(@PathVariable String pubId,
+                                  @RequestParam String newText,
+                                  @RequestParam String newTag) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userService.findUserByEmail(email);
+        // Current character limit
+        if (newText.length() > 255) {
+            return "redirect:/index/publication_edit/" + pubId + "?error=TextTooLong";
+        }
+
         if (StringUtils.isBlank(newText) && StringUtils.isBlank(newTag)) {
             return "redirect:/index?error=NoChanges";
         }
 
         try {
-            publicationService.editPublication(pubId, newTag, newText);
+            publicationService.editPublication(pubId, newTag, newText, currentUser);
         } catch (IllegalArgumentException e) {
             return "redirect:/index?error=" + e.getMessage();
         }
         return "redirect:/index";
     }
 
+    @PostMapping("/deletePublication/{pubId}")
+    public String deletePublication(@PathVariable String pubId) {
+        Publication publication = publicationService.getPublicationById(pubId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User currentUser = userService.findUserByEmail(email);
+
+        if (publication.getUser() == null || !publication.getUser().equals(currentUser)) {
+            throw new IllegalArgumentException("Unauthorized");
+        }
+        publicationService.deletePublication(pubId, currentUser);
+        return "redirect:/index";
+    }
 }

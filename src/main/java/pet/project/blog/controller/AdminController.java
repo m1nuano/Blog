@@ -31,7 +31,6 @@ public class AdminController {
         return "admin";
     }
 
-
     @GetMapping("/index/admin/users")
     public String users(Model model) {
         List<UserDto> users = userService.findAllUsers();
@@ -44,7 +43,6 @@ public class AdminController {
 
         return "users";
     }
-
 
     @PostMapping("/deleteUser/{userId}")
     public String deleteUser(@PathVariable String userId, RedirectAttributes redirectAttributes) {

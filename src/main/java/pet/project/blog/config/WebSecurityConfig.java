@@ -34,17 +34,18 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .cors().disable()
                 .authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers("/register/**", "/index", "/login").permitAll()
+                        authorize.requestMatchers("/register/**", "/login").permitAll()
                                 .requestMatchers("/index/admin").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/deleteUser/**").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/changeRole/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/index/profile/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/deletePublication/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/index/profile").authenticated()
                                 .anyRequest().authenticated()
                 ).formLogin(
                         form -> form
                                 .loginPage("/login")
                                 .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/index")
+                                .defaultSuccessUrl("/index", true)
                                 .permitAll()
                 ).logout(
                         logout -> logout
