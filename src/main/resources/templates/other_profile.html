@@ -10,7 +10,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/index}">Just a website</a>
+        <a class="navbar-brand" th:href="@{/index}">Website</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -48,9 +48,9 @@
     <div class="bg-body-tertiary p-5 rounded">
         <h1>Publications of this User</h1>
         <div th:each="public : ${public}" class="alert alert-info mt-2">
-            <p> ID: <a th:text="${public.id}"></a></p>
-            <h4 th:text="${public.tag}"></h4>
-            <h1 th:text="${public.text}"></h1>
+            <p>ID: <a th:text="${public.id}"></a></p>
+            <h4 class="text-wrap" style="word-wrap: break-word;" th:text="${public.tag}"></h4>
+            <pre class="formatted-text" th:text="${public.text}"></pre>
         </div>
     </div>
 </main>

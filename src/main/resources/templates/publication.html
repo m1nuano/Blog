@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Blog</title>
@@ -9,6 +7,11 @@
         rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
         crossorigin="anonymous">
+  <style>
+    .formatted-text {
+      white-space: pre-wrap;
+    }
+  </style>
   <header th:insert="~{layout/footerFIX :: footerFIX}"></header>
 </head>
 <body>
@@ -34,33 +37,33 @@
           <h2 class="text-center">Add new publication</h2>
         </div>
         <div class="card-body">
-          <form
-                  method="post"
-                  role="form"
-                  th:action="@{/index/publication}"
-                  class="form-horizontal"
-          >
+          <form method="post"
+                role="form"
+                th:action="@{/index/publication}"
+                class="form-horizontal">
             <div class="form-group mb-3">
-              <label class="control-label"> Tag</label>
-              <input
-                      type="text"
-                      name="tag"
-                      class="form-control"
-                      placeholder="Enter tag"
-              />
+              <label class="control-label">Tag</label>
+              <input type="text"
+                     name="tag"
+                     class="form-control"
+                     placeholder="Enter tag"
+                     required />
             </div>
 
             <div class="form-group mb-3">
-              <label class="control-label"> Text</label>
-              <input
-                      type="text"
-                      name="text"
-                      class="form-control"
-                      placeholder="Enter text"
-              />
+              <label class="control-label">Text</label>
+              <textarea id="text"
+                        name="text"
+                        class="form-control formatted-text"
+                        rows="5"
+                        placeholder="Enter text"
+                        required></textarea>
+              <div id="charCount" class="form-text"></div>
             </div>
             <div class="form-group mb-3">
-              <button type="submit" class="btn btn-success">Submit</button>
+              <button type="submit"
+                      class="btn btn-success"
+                      id="submitButton">Submit</button>
             </div>
           </form>
         </div>
@@ -68,11 +71,36 @@
     </div>
   </div>
 </div>
-<!--<footer th:insert="~{layout/footer :: footer}"></footer>-->
 <script>
   function goBack() {
     window.history.back();
   }
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const maxLength = 255;
+    const textArea = document.getElementById('text');
+    const charCount = document.getElementById('charCount');
+    const submitButton = document.getElementById('submitButton');
+
+    function updateCharCount() {
+      const currentText = textArea.value;
+      // Remove HTML tags and count visible characters
+      const visibleText = currentText.replace(/(<([^>]+)>)/ig, ''); // Remove HTML tags
+      const currentLength = visibleText.length;
+
+      charCount.textContent = `${currentLength}/${maxLength}`;
+      if (currentLength > maxLength) {
+        charCount.classList.add('text-danger');
+        submitButton.disabled = true;
+      } else {
+        charCount.classList.remove('text-danger');
+        submitButton.disabled = false;
+      }
+    }
+
+    textArea.addEventListener('input', updateCharCount);
+    updateCharCount();
+  });
 </script>
 </body>
 </html>

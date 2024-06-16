@@ -10,7 +10,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/index}">Just a website</a>
+        <a class="navbar-brand" th:href="@{/index}">Website</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -64,11 +64,16 @@
         <div th:each="public : ${public}" class="alert alert-info mt-2">
             <p>ID: <a th:text="${public.id}"></a></p>
             <h4 class="text-wrap" style="word-wrap: break-word;" th:text="${public.tag}"></h4>
-            <h1 class="text-wrap" style="word-wrap: break-word;" th:text="${public.text}"></h1>
+            <pre class="formatted-text" th:text="${public.text}"></pre>
             <div class="nav-link active text-end">
-                <small>
-                    <a th:href="@{'/index/publication_edit/' + ${public.id}}" class="btn btn-primary" href="/docs/5.3/components/navbar/" role="button">Edit</a>
-                </small>
+                    <form th:action="@{/deletePublication/{publicId}(publicId=${public.id})}" method="post">
+                        <small>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        </small>
+                        <small>
+                            <a th:href="@{'/index/publication_edit/' + ${public.id}}" class="btn btn-primary" href="/docs/5.3/components/navbar/" role="button">Edit</a>
+                        </small>
+                    </form>
             </div>
         </div>
     </div>

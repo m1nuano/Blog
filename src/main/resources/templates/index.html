@@ -7,6 +7,7 @@
           rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
+
     <header th:insert="~{layout/footerFIX :: footerFIX}"></header>
 </head>
 <body>
@@ -21,7 +22,7 @@
                 <div th:each="public : ${public}" class="alert alert-info mt-2">
                     <p>ID: <a th:text="${public.id}"></a></p>
                     <h4 class="text-wrap" style="word-wrap: break-word;" th:text="${public.tag}"></h4>
-                    <h1 class="text-wrap" style="word-wrap: break-word;" th:text="${public.text}"></h1>
+                    <pre class="formatted-text" th:text="${public.text}"></pre>
                     <!-- Nickname of the post author in the lower right corner -->
                     <div class="nav-link active text-end">
                         <small>
